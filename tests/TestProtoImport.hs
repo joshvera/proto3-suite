@@ -24,16 +24,16 @@ import qualified Data.Int as Hs (Int16, Int32, Int64)
 import qualified Data.Word as Hs (Word16, Word32, Word64)
 import qualified GHC.Generics as Hs
 import qualified GHC.Enum as Hs
- 
+
 data WithNesting = WithNesting{withNestingNestedMessage1 ::
                                Hs.Maybe TestProtoImport.WithNesting_Nested,
                                withNestingNestedMessage2 ::
                                Hs.Maybe TestProtoImport.WithNesting_Nested}
                  deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+
 instance HsProtobuf.Named WithNesting where
         nameOf _ = (Hs.fromString "WithNesting")
- 
+
 instance HsProtobuf.Message WithNesting where
         encodeMessage _
           WithNesting{withNestingNestedMessage1 = withNestingNestedMessage1,
@@ -53,17 +53,19 @@ instance HsProtobuf.Message WithNesting where
                  (HsProtobuf.at HsProtobuf.decodeMessageField
                     (HsProtobuf.FieldNumber 100)))
         dotProto _
-          = [(HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 1)
+          = [HsProtobuf.DotProtoMessageField
+             (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 1)
                 (HsProtobuf.Prim (HsProtobuf.Named (HsProtobuf.Single "Nested")))
                 (HsProtobuf.Single "nestedMessage1")
                 []
                 Hs.Nothing),
+             HsProtobuf.DotProtoMessageField
              (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 100)
                 (HsProtobuf.Prim (HsProtobuf.Named (HsProtobuf.Single "Nested")))
                 (HsProtobuf.Single "nestedMessage2")
                 []
                 Hs.Nothing)]
- 
+
 instance HsJSONPB.ToJSONPB WithNesting where
         toJSONPB (WithNesting f1 f100)
           = (HsJSONPB.object
@@ -71,32 +73,32 @@ instance HsJSONPB.ToJSONPB WithNesting where
         toEncodingPB (WithNesting f1 f100)
           = (HsJSONPB.pairs
                ["nestedMessage1" .= f1, "nestedMessage2" .= f100])
- 
+
 instance HsJSONPB.FromJSONPB WithNesting where
         parseJSONPB
           = (HsJSONPB.withObject "WithNesting"
                (\ obj ->
                   (Hs.pure WithNesting) <*> obj .: "nestedMessage1" <*>
                     obj .: "nestedMessage2"))
- 
+
 instance HsJSONPB.ToJSON WithNesting where
         toJSON = HsJSONPB.toAesonValue
         toEncoding = HsJSONPB.toAesonEncoding
- 
+
 instance HsJSONPB.FromJSON WithNesting where
         parseJSON = HsJSONPB.parseJSONPB
- 
+
 instance HsJSONPB.ToSchema WithNesting where
         declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB
- 
+
 data WithNesting_Nested = WithNesting_Nested{withNesting_NestedNestedField1
                                              :: Hs.Int32,
                                              withNesting_NestedNestedField2 :: Hs.Int32}
                         deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+
 instance HsProtobuf.Named WithNesting_Nested where
         nameOf _ = (Hs.fromString "WithNesting_Nested")
- 
+
 instance HsProtobuf.Message WithNesting_Nested where
         encodeMessage _
           WithNesting_Nested{withNesting_NestedNestedField1 =
@@ -115,36 +117,38 @@ instance HsProtobuf.Message WithNesting_Nested where
               (HsProtobuf.at HsProtobuf.decodeMessageField
                  (HsProtobuf.FieldNumber 2))
         dotProto _
-          = [(HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 1)
+          = [HsProtobuf.DotProtoMessageField
+             (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 1)
                 (HsProtobuf.Prim HsProtobuf.Int32)
                 (HsProtobuf.Single "nestedField1")
                 []
                 Hs.Nothing),
+             HsProtobuf.DotProtoMessageField
              (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 2)
                 (HsProtobuf.Prim HsProtobuf.Int32)
                 (HsProtobuf.Single "nestedField2")
                 []
                 Hs.Nothing)]
- 
+
 instance HsJSONPB.ToJSONPB WithNesting_Nested where
         toJSONPB (WithNesting_Nested f1 f2)
           = (HsJSONPB.object ["nestedField1" .= f1, "nestedField2" .= f2])
         toEncodingPB (WithNesting_Nested f1 f2)
           = (HsJSONPB.pairs ["nestedField1" .= f1, "nestedField2" .= f2])
- 
+
 instance HsJSONPB.FromJSONPB WithNesting_Nested where
         parseJSONPB
           = (HsJSONPB.withObject "WithNesting_Nested"
                (\ obj ->
                   (Hs.pure WithNesting_Nested) <*> obj .: "nestedField1" <*>
                     obj .: "nestedField2"))
- 
+
 instance HsJSONPB.ToJSON WithNesting_Nested where
         toJSON = HsJSONPB.toAesonValue
         toEncoding = HsJSONPB.toAesonEncoding
- 
+
 instance HsJSONPB.FromJSON WithNesting_Nested where
         parseJSON = HsJSONPB.parseJSONPB
- 
+
 instance HsJSONPB.ToSchema WithNesting_Nested where
         declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB

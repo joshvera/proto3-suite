@@ -35,6 +35,7 @@ library
                        containers ==0.5.*,
                        foldl,
                        haskell-src ==1.0.*,
+                       integer-gmp,
                        lens,
                        mtl ==2.2.*,
                        neat-interpolation,
@@ -65,6 +66,10 @@ test-suite tests
   main-is:             Main.hs
   other-modules:       TestProto
                        TestCodeGen
+                       ArbitraryGeneratedTestTypes
+                       TestProtoImport
+                       TestProtoOneof
+                       TestProtoOneofImport
   hs-source-dirs:      tests
   default-language:    Haskell2010
   build-depends:       base >=4.8 && <5.0,
@@ -76,12 +81,13 @@ test-suite tests
                        bytestring >=0.10.6.0 && <0.11.0,
                        cereal >= 0.5.1 && <0.6,
                        doctest,
-                       pretty-show >= 1.6.12 && < 1.7,
+                       integer-gmp,
+                       pretty-show >= 1.6.12 && < 1.8,
                        proto3-suite,
                        proto3-wire == 1.0.*,
                        semigroups ==0.18.*,
-                       tasty >= 0.11 && <0.12,
-                       tasty-hunit >= 0.9 && <0.10,
+                       tasty >= 0.11 && <2,
+                       tasty-hunit >= 0.9 && <0.11,
                        tasty-quickcheck >= 0.9.1 && <1.0,
                        text >= 0.2 && <1.3,
                        transformers >=0.4 && <0.6,

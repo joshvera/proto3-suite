@@ -25,13 +25,13 @@ import qualified Data.Word as Hs (Word16, Word32, Word64)
 import qualified GHC.Generics as Hs
 import qualified GHC.Enum as Hs
 import qualified TestProtoOneofImport
- 
+
 data DummyMsg = DummyMsg{dummyMsgDummy :: Hs.Int32}
-              deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+              deriving (Hs.Show, Hs.Eq, Hs.Generic)
+
 instance HsProtobuf.Named DummyMsg where
         nameOf _ = (Hs.fromString "DummyMsg")
- 
+
 instance HsProtobuf.Message DummyMsg where
         encodeMessage _ DummyMsg{dummyMsgDummy = dummyMsgDummy}
           = (Hs.mconcat
@@ -42,38 +42,20 @@ instance HsProtobuf.Message DummyMsg where
               (HsProtobuf.at HsProtobuf.decodeMessageField
                  (HsProtobuf.FieldNumber 1))
         dotProto _
-          = [(HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 1)
-                (HsProtobuf.Prim HsProtobuf.Int32)
-                (HsProtobuf.Single "dummy")
-                []
-                Hs.Nothing)]
- 
-instance HsJSONPB.ToJSONPB DummyMsg where
-        toJSONPB (DummyMsg f1) = (HsJSONPB.object ["dummy" .= f1])
-        toEncodingPB (DummyMsg f1) = (HsJSONPB.pairs ["dummy" .= f1])
- 
-instance HsJSONPB.FromJSONPB DummyMsg where
-        parseJSONPB
-          = (HsJSONPB.withObject "DummyMsg"
-               (\ obj -> (Hs.pure DummyMsg) <*> obj .: "dummy"))
- 
-instance HsJSONPB.ToJSON DummyMsg where
-        toJSON = HsJSONPB.toAesonValue
-        toEncoding = HsJSONPB.toAesonEncoding
- 
-instance HsJSONPB.FromJSON DummyMsg where
-        parseJSON = HsJSONPB.parseJSONPB
- 
-instance HsJSONPB.ToSchema DummyMsg where
-        declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB
- 
+          = [(HsProtobuf.DotProtoMessageField
+                (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 1)
+                   (HsProtobuf.Prim HsProtobuf.Int32)
+                   (HsProtobuf.Single "dummy")
+                   []
+                   Hs.Nothing))]
+
 data DummyEnum = DummyEnumDUMMY0
                | DummyEnumDUMMY1
                deriving (Hs.Show, Hs.Bounded, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+
 instance HsProtobuf.Named DummyEnum where
         nameOf _ = (Hs.fromString "DummyEnum")
- 
+
 instance Hs.Enum DummyEnum where
         toEnum 0 = DummyEnumDUMMY0
         toEnum 1 = DummyEnumDUMMY1
@@ -84,33 +66,33 @@ instance Hs.Enum DummyEnum where
         succ _ = Hs.succError "DummyEnum"
         pred (DummyEnumDUMMY1) = DummyEnumDUMMY0
         pred _ = Hs.predError "DummyEnum"
- 
+
 instance HsJSONPB.ToJSONPB DummyEnum where
         toJSONPB x _ = HsJSONPB.enumFieldString x
         toEncodingPB x _ = HsJSONPB.enumFieldEncoding x
- 
+
 instance HsJSONPB.FromJSONPB DummyEnum where
         parseJSONPB (HsJSONPB.String "DUMMY0") = Hs.pure DummyEnumDUMMY0
         parseJSONPB (HsJSONPB.String "DUMMY1") = Hs.pure DummyEnumDUMMY1
         parseJSONPB v = (HsJSONPB.typeMismatch "DummyEnum" v)
- 
+
 instance HsJSONPB.ToJSON DummyEnum where
         toJSON = HsJSONPB.toAesonValue
         toEncoding = HsJSONPB.toAesonEncoding
- 
+
 instance HsJSONPB.FromJSON DummyEnum where
         parseJSON = HsJSONPB.parseJSONPB
- 
+
 instance HsProtobuf.Finite DummyEnum
- 
+
 data Something = Something{somethingValue :: Hs.Int64,
                            somethingAnother :: Hs.Int32,
                            somethingPickOne :: Hs.Maybe SomethingPickOne}
-               deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+               deriving (Hs.Show, Hs.Eq, Hs.Generic)
+
 instance HsProtobuf.Named Something where
         nameOf _ = (Hs.fromString "Something")
- 
+
 instance HsProtobuf.Message Something where
         encodeMessage _
           Something{somethingValue = somethingValue,
@@ -167,95 +149,38 @@ instance HsProtobuf.Message Something where
                    (Hs.pure (Hs.Just Hs.. SomethingPickOneDummyEnum)) <*>
                      HsProtobuf.decodeMessageField)])
         dotProto _
-          = [(HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 1)
-                (HsProtobuf.Prim HsProtobuf.SInt64)
-                (HsProtobuf.Single "value")
-                []
-                Hs.Nothing),
-             (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 2)
-                (HsProtobuf.Prim HsProtobuf.SInt32)
-                (HsProtobuf.Single "another")
-                []
-                Hs.Nothing)]
- 
-instance HsJSONPB.ToJSONPB Something where
-        toJSONPB (Something f1 f2 f4_or_f9_or_f10_or_f11_or_f12)
-          = (HsJSONPB.object
-               ["value" .= f1, "another" .= f2,
-                case f4_or_f9_or_f10_or_f11_or_f12 of
-                    Hs.Just (SomethingPickOneName f4) -> (HsJSONPB.pair "name" f4)
-                    Hs.Just (SomethingPickOneSomeid f9) -> (HsJSONPB.pair "someid" f9)
-                    Hs.Just (SomethingPickOneDummyMsg1 f10)
-                      -> (HsJSONPB.pair "dummyMsg1" f10)
-                    Hs.Just (SomethingPickOneDummyMsg2 f11)
-                      -> (HsJSONPB.pair "dummyMsg2" f11)
-                    Hs.Just (SomethingPickOneDummyEnum f12)
-                      -> (HsJSONPB.pair "dummyEnum" f12)
-                    Hs.Nothing -> Hs.mempty])
-        toEncodingPB (Something f1 f2 f4_or_f9_or_f10_or_f11_or_f12)
-          = (HsJSONPB.pairs
-               ["value" .= f1, "another" .= f2,
-                case f4_or_f9_or_f10_or_f11_or_f12 of
-                    Hs.Just (SomethingPickOneName f4) -> (HsJSONPB.pair "name" f4)
-                    Hs.Just (SomethingPickOneSomeid f9) -> (HsJSONPB.pair "someid" f9)
-                    Hs.Just (SomethingPickOneDummyMsg1 f10)
-                      -> (HsJSONPB.pair "dummyMsg1" f10)
-                    Hs.Just (SomethingPickOneDummyMsg2 f11)
-                      -> (HsJSONPB.pair "dummyMsg2" f11)
-                    Hs.Just (SomethingPickOneDummyEnum f12)
-                      -> (HsJSONPB.pair "dummyEnum" f12)
-                    Hs.Nothing -> Hs.mempty])
- 
-instance HsJSONPB.FromJSONPB Something where
-        parseJSONPB
-          = (HsJSONPB.withObject "Something"
-               (\ obj ->
-                  (Hs.pure Something) <*> obj .: "value" <*> obj .: "another" <*>
-                    Hs.msum
-                      [Hs.Just Hs.. SomethingPickOneName <$>
-                         (HsJSONPB.parseField obj "name"),
-                       Hs.Just Hs.. SomethingPickOneSomeid <$>
-                         (HsJSONPB.parseField obj "someid"),
-                       Hs.Just Hs.. SomethingPickOneDummyMsg1 <$>
-                         (HsJSONPB.parseField obj "dummyMsg1"),
-                       Hs.Just Hs.. SomethingPickOneDummyMsg2 <$>
-                         (HsJSONPB.parseField obj "dummyMsg2"),
-                       Hs.Just Hs.. SomethingPickOneDummyEnum <$>
-                         (HsJSONPB.parseField obj "dummyEnum"),
-                       Hs.pure Hs.Nothing]))
- 
-instance HsJSONPB.ToJSON Something where
-        toJSON = HsJSONPB.toAesonValue
-        toEncoding = HsJSONPB.toAesonEncoding
- 
-instance HsJSONPB.FromJSON Something where
-        parseJSON = HsJSONPB.parseJSONPB
- 
-instance HsJSONPB.ToSchema Something where
-        declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB
- 
+          = [(HsProtobuf.DotProtoMessageField
+                (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 1)
+                   (HsProtobuf.Prim HsProtobuf.SInt64)
+                   (HsProtobuf.Single "value")
+                   []
+                   Hs.Nothing)),
+             (HsProtobuf.DotProtoMessageField
+                (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 2)
+                   (HsProtobuf.Prim HsProtobuf.SInt32)
+                   (HsProtobuf.Single "another")
+                   []
+                   Hs.Nothing))]
+
 data SomethingPickOne = SomethingPickOneName Hs.Text
                       | SomethingPickOneSomeid Hs.Int32
                       | SomethingPickOneDummyMsg1 TestProtoOneof.DummyMsg
                       | SomethingPickOneDummyMsg2 TestProtoOneof.DummyMsg
                       | SomethingPickOneDummyEnum (HsProtobuf.Enumerated
                                                      TestProtoOneof.DummyEnum)
-                      deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+                      deriving (Hs.Show, Hs.Eq, Hs.Generic)
+
 instance HsProtobuf.Named SomethingPickOne where
         nameOf _ = (Hs.fromString "SomethingPickOne")
- 
-instance HsJSONPB.ToSchema SomethingPickOne where
-        declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB
- 
+
 data OneofFirst = OneofFirst{oneofFirstFirst ::
                              Hs.Maybe OneofFirstFirst,
                              oneofFirstLast :: Hs.Int32}
-                deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+                deriving (Hs.Show, Hs.Eq, Hs.Generic)
+
 instance HsProtobuf.Named OneofFirst where
         nameOf _ = (Hs.fromString "OneofFirst")
- 
+
 instance HsProtobuf.Message OneofFirst where
         encodeMessage _
           OneofFirst{oneofFirstFirst = oneofFirstFirst,
@@ -286,69 +211,28 @@ instance HsProtobuf.Message OneofFirst where
               (HsProtobuf.at HsProtobuf.decodeMessageField
                  (HsProtobuf.FieldNumber 3))
         dotProto _
-          = [(HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 3)
-                (HsProtobuf.Prim HsProtobuf.Int32)
-                (HsProtobuf.Single "last")
-                []
-                Hs.Nothing)]
- 
-instance HsJSONPB.ToJSONPB OneofFirst where
-        toJSONPB (OneofFirst f1_or_f2 f3)
-          = (HsJSONPB.object
-               [case f1_or_f2 of
-                    Hs.Just (OneofFirstFirstChoice1 f1) -> (HsJSONPB.pair "choice1" f1)
-                    Hs.Just (OneofFirstFirstChoice2 f2) -> (HsJSONPB.pair "choice2" f2)
-                    Hs.Nothing -> Hs.mempty,
-                "last" .= f3])
-        toEncodingPB (OneofFirst f1_or_f2 f3)
-          = (HsJSONPB.pairs
-               [case f1_or_f2 of
-                    Hs.Just (OneofFirstFirstChoice1 f1) -> (HsJSONPB.pair "choice1" f1)
-                    Hs.Just (OneofFirstFirstChoice2 f2) -> (HsJSONPB.pair "choice2" f2)
-                    Hs.Nothing -> Hs.mempty,
-                "last" .= f3])
- 
-instance HsJSONPB.FromJSONPB OneofFirst where
-        parseJSONPB
-          = (HsJSONPB.withObject "OneofFirst"
-               (\ obj ->
-                  (Hs.pure OneofFirst) <*>
-                    Hs.msum
-                      [Hs.Just Hs.. OneofFirstFirstChoice1 <$>
-                         (HsJSONPB.parseField obj "choice1"),
-                       Hs.Just Hs.. OneofFirstFirstChoice2 <$>
-                         (HsJSONPB.parseField obj "choice2"),
-                       Hs.pure Hs.Nothing]
-                    <*> obj .: "last"))
- 
-instance HsJSONPB.ToJSON OneofFirst where
-        toJSON = HsJSONPB.toAesonValue
-        toEncoding = HsJSONPB.toAesonEncoding
- 
-instance HsJSONPB.FromJSON OneofFirst where
-        parseJSON = HsJSONPB.parseJSONPB
- 
-instance HsJSONPB.ToSchema OneofFirst where
-        declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB
- 
+          = [(HsProtobuf.DotProtoMessageField
+                (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 3)
+                   (HsProtobuf.Prim HsProtobuf.Int32)
+                   (HsProtobuf.Single "last")
+                   []
+                   Hs.Nothing))]
+
 data OneofFirstFirst = OneofFirstFirstChoice1 Hs.Text
                      | OneofFirstFirstChoice2 Hs.Text
-                     deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+                     deriving (Hs.Show, Hs.Eq, Hs.Generic)
+
 instance HsProtobuf.Named OneofFirstFirst where
         nameOf _ = (Hs.fromString "OneofFirstFirst")
- 
-instance HsJSONPB.ToSchema OneofFirstFirst where
-        declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB
- 
+
 data OneofMiddle = OneofMiddle{oneofMiddleFirst :: Hs.Int32,
                                oneofMiddleMiddle :: Hs.Maybe OneofMiddleMiddle,
                                oneofMiddleLast :: Hs.Int32}
-                 deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+                 deriving (Hs.Show, Hs.Eq, Hs.Generic)
+
 instance HsProtobuf.Named OneofMiddle where
         nameOf _ = (Hs.fromString "OneofMiddle")
- 
+
 instance HsProtobuf.Message OneofMiddle where
         encodeMessage _
           OneofMiddle{oneofMiddleFirst = oneofMiddleFirst,
@@ -385,79 +269,33 @@ instance HsProtobuf.Message OneofMiddle where
               (HsProtobuf.at HsProtobuf.decodeMessageField
                  (HsProtobuf.FieldNumber 4))
         dotProto _
-          = [(HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 1)
-                (HsProtobuf.Prim HsProtobuf.Int32)
-                (HsProtobuf.Single "first")
-                []
-                Hs.Nothing),
-             (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 4)
-                (HsProtobuf.Prim HsProtobuf.Int32)
-                (HsProtobuf.Single "last")
-                []
-                Hs.Nothing)]
- 
-instance HsJSONPB.ToJSONPB OneofMiddle where
-        toJSONPB (OneofMiddle f1 f2_or_f3 f4)
-          = (HsJSONPB.object
-               ["first" .= f1,
-                case f2_or_f3 of
-                    Hs.Just (OneofMiddleMiddleChoice1 f2)
-                      -> (HsJSONPB.pair "choice1" f2)
-                    Hs.Just (OneofMiddleMiddleChoice2 f3)
-                      -> (HsJSONPB.pair "choice2" f3)
-                    Hs.Nothing -> Hs.mempty,
-                "last" .= f4])
-        toEncodingPB (OneofMiddle f1 f2_or_f3 f4)
-          = (HsJSONPB.pairs
-               ["first" .= f1,
-                case f2_or_f3 of
-                    Hs.Just (OneofMiddleMiddleChoice1 f2)
-                      -> (HsJSONPB.pair "choice1" f2)
-                    Hs.Just (OneofMiddleMiddleChoice2 f3)
-                      -> (HsJSONPB.pair "choice2" f3)
-                    Hs.Nothing -> Hs.mempty,
-                "last" .= f4])
- 
-instance HsJSONPB.FromJSONPB OneofMiddle where
-        parseJSONPB
-          = (HsJSONPB.withObject "OneofMiddle"
-               (\ obj ->
-                  (Hs.pure OneofMiddle) <*> obj .: "first" <*>
-                    Hs.msum
-                      [Hs.Just Hs.. OneofMiddleMiddleChoice1 <$>
-                         (HsJSONPB.parseField obj "choice1"),
-                       Hs.Just Hs.. OneofMiddleMiddleChoice2 <$>
-                         (HsJSONPB.parseField obj "choice2"),
-                       Hs.pure Hs.Nothing]
-                    <*> obj .: "last"))
- 
-instance HsJSONPB.ToJSON OneofMiddle where
-        toJSON = HsJSONPB.toAesonValue
-        toEncoding = HsJSONPB.toAesonEncoding
- 
-instance HsJSONPB.FromJSON OneofMiddle where
-        parseJSON = HsJSONPB.parseJSONPB
- 
-instance HsJSONPB.ToSchema OneofMiddle where
-        declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB
- 
+          = [(HsProtobuf.DotProtoMessageField
+                (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 1)
+                   (HsProtobuf.Prim HsProtobuf.Int32)
+                   (HsProtobuf.Single "first")
+                   []
+                   Hs.Nothing)),
+             (HsProtobuf.DotProtoMessageField
+                (HsProtobuf.DotProtoField (HsProtobuf.FieldNumber 4)
+                   (HsProtobuf.Prim HsProtobuf.Int32)
+                   (HsProtobuf.Single "last")
+                   []
+                   Hs.Nothing))]
+
 data OneofMiddleMiddle = OneofMiddleMiddleChoice1 Hs.Text
                        | OneofMiddleMiddleChoice2 Hs.Text
-                       deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+                       deriving (Hs.Show, Hs.Eq, Hs.Generic)
+
 instance HsProtobuf.Named OneofMiddleMiddle where
         nameOf _ = (Hs.fromString "OneofMiddleMiddle")
- 
-instance HsJSONPB.ToSchema OneofMiddleMiddle where
-        declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB
- 
+
 data WithImported = WithImported{withImportedPickOne ::
                                  Hs.Maybe WithImportedPickOne}
-                  deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+                  deriving (Hs.Show, Hs.Eq, Hs.Generic)
+
 instance HsProtobuf.Named WithImported where
         nameOf _ = (Hs.fromString "WithImported")
- 
+
 instance HsProtobuf.Message WithImported where
         encodeMessage _
           WithImported{withImportedPickOne = withImportedPickOne}
@@ -482,53 +320,10 @@ instance HsProtobuf.Message WithImported where
                    (Hs.pure (Hs.fmap WithImportedPickOneWithOneof)) <*>
                      ((Hs.pure HsProtobuf.nested) <*> HsProtobuf.decodeMessageField))])
         dotProto _ = []
- 
-instance HsJSONPB.ToJSONPB WithImported where
-        toJSONPB (WithImported f1_or_f2)
-          = (HsJSONPB.object
-               [case f1_or_f2 of
-                    Hs.Just (WithImportedPickOneDummyMsg1 f1)
-                      -> (HsJSONPB.pair "dummyMsg1" f1)
-                    Hs.Just (WithImportedPickOneWithOneof f2)
-                      -> (HsJSONPB.pair "withOneof" f2)
-                    Hs.Nothing -> Hs.mempty])
-        toEncodingPB (WithImported f1_or_f2)
-          = (HsJSONPB.pairs
-               [case f1_or_f2 of
-                    Hs.Just (WithImportedPickOneDummyMsg1 f1)
-                      -> (HsJSONPB.pair "dummyMsg1" f1)
-                    Hs.Just (WithImportedPickOneWithOneof f2)
-                      -> (HsJSONPB.pair "withOneof" f2)
-                    Hs.Nothing -> Hs.mempty])
- 
-instance HsJSONPB.FromJSONPB WithImported where
-        parseJSONPB
-          = (HsJSONPB.withObject "WithImported"
-               (\ obj ->
-                  (Hs.pure WithImported) <*>
-                    Hs.msum
-                      [Hs.Just Hs.. WithImportedPickOneDummyMsg1 <$>
-                         (HsJSONPB.parseField obj "dummyMsg1"),
-                       Hs.Just Hs.. WithImportedPickOneWithOneof <$>
-                         (HsJSONPB.parseField obj "withOneof"),
-                       Hs.pure Hs.Nothing]))
- 
-instance HsJSONPB.ToJSON WithImported where
-        toJSON = HsJSONPB.toAesonValue
-        toEncoding = HsJSONPB.toAesonEncoding
- 
-instance HsJSONPB.FromJSON WithImported where
-        parseJSON = HsJSONPB.parseJSONPB
- 
-instance HsJSONPB.ToSchema WithImported where
-        declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB
- 
+
 data WithImportedPickOne = WithImportedPickOneDummyMsg1 TestProtoOneof.DummyMsg
                          | WithImportedPickOneWithOneof TestProtoOneofImport.WithOneof
-                         deriving (Hs.Show, Hs.Eq, Hs.Ord, Hs.Generic)
- 
+                         deriving (Hs.Show, Hs.Eq, Hs.Generic)
+
 instance HsProtobuf.Named WithImportedPickOne where
         nameOf _ = (Hs.fromString "WithImportedPickOne")
- 
-instance HsJSONPB.ToSchema WithImportedPickOne where
-        declareNamedSchema = HsJSONPB.genericDeclareNamedSchemaJSONPB

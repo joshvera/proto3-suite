@@ -225,7 +225,7 @@ testCase13 = testCase "Nested message with the same name as another package-leve
 testCase14 = testCase "Qualified name resolution" $
     do WithQualifiedName { .. } <- readProto
        withQualifiedNameQname1 @?= Just (ShadowedMessage "int value" 42)
-       withQualifiedNameQname2 @?= Just (MessageShadower_ShadowedMessage "string value" "hello world")
+       withQualifiedNameQname1 @?= Just (ShadowedMessage "string value" "hello world")
 
 testCase15 = testCase "Imported message resolution" $
     do TestProtoImport.WithNesting { .. } <- readProto

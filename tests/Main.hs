@@ -224,7 +224,7 @@ testDotProtoParse file ast = do
     Right result -> ast @=? result
 
 testDotProtoPrint :: DotProto -> String -> Assertion
-testDotProtoPrint ast expected = expected @=? toProtoFileDef ast
+testDotProtoPrint ast expected = expected @=? takeWhile (/= '\n') (toProtoFileDef ast)
 
 testDotProtoRoundtrip :: DotProto -> Assertion
 testDotProtoRoundtrip ast =
@@ -300,7 +300,7 @@ qcDotProtoRoundtrip = testProperty
 
 dotProtoFor :: (Named a, Message a) => Proxy a -> DotProto
 dotProtoFor proxy = DotProto [] [] DotProtoNoPackage
-  [ DotProtoMessage (Single (nameOf proxy)) (DotProtoMessageField <$> dotProto proxy)
+  [ DotProtoMessage (Single (nameOf proxy)) (dotProto proxy)
   ]
   (DotProtoMeta (Path []))
 

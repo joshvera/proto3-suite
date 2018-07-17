@@ -124,7 +124,7 @@ testCase13 =
 testCase14 :: IO ()
 testCase14 =
   outputMessage (WithQualifiedName (Just (ShadowedMessage "int value" 42))
-                                   (Just (MessageShadower_ShadowedMessage "string value" "hello world")))
+                                   (Just (ShadowedMessage "string value" "hello world")))
 
 testCase15 :: IO ()
 testCase15 =
