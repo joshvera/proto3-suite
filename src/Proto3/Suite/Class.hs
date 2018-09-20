@@ -82,6 +82,7 @@ module Proto3.Suite.Class
   , fromByteString
   , fromByteString1
   , fromB64
+  , fromEmbedded''
 
   -- * Documentation
   , Named1(..)
@@ -335,6 +336,10 @@ class Primitive a where
 -- | Serialize a message as a lazy 'BL.ByteString'.
 toLazyByteString :: Message a => a -> BL.ByteString
 toLazyByteString = Encode.toLazyByteString . encodeMessage (fieldNumber 1)
+
+-- | Decode any embedded message.
+fromEmbedded'' :: Parser RawMessage a -> FieldNumber -> Parser RawMessage a
+fromEmbedded'' parser = Decode.at (Decode.embedded'' parser)
 
 -- | Parse any message that can be decoded.
 fromByteString :: Message a => B.ByteString -> Either ParseError a
