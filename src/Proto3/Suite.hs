@@ -23,6 +23,7 @@ module Proto3.Suite
   , toLazyByteString1
   , fromByteString1
   , fromB64
+  , fromEmbedded''
   , Message(..)
   , Message1(..)
   , MessageField(..)
