@@ -338,7 +338,7 @@ toLazyByteString :: Message a => a -> BL.ByteString
 toLazyByteString = Encode.toLazyByteString . encodeMessage (fieldNumber 1)
 
 -- | Decode any embedded message.
-fromEmbedded'' :: Parser RawMessage a -> FieldNumber -> Parser RawMessage a
+fromEmbedded'' :: Field Number -> Parser RawMessage a -> Parser RawMessage a
 fromEmbedded'' parser = Decode.at (Decode.embedded'' parser)
 
 -- | Parse any message that can be decoded.
