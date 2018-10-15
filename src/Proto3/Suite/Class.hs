@@ -538,26 +538,26 @@ messageField ty packing = DotProtoField (fieldNumber 1) ty Anonymous
 -- generateMessagePartName :: DotProtoIdentifier
 -- generateMessagePartName = Single ""
 
-instance MessageField Int
-instance MessageField Int32
-instance MessageField Int64
-instance MessageField Word32
-instance MessageField Word64
-instance MessageField (Signed Int32)
-instance MessageField (Signed Int64)
-instance MessageField (Fixed Word32)
-instance MessageField (Fixed Word64)
-instance MessageField (Signed (Fixed Int32))
-instance MessageField (Signed (Fixed Int64))
-instance MessageField Bool
-instance MessageField Float
-instance MessageField Double
+instance {-# OVERLAPPING #-} MessageField Int
+instance {-# OVERLAPPING #-} MessageField Int32
+instance {-# OVERLAPPING #-} MessageField Int64
+instance {-# OVERLAPPING #-} MessageField Word32
+instance {-# OVERLAPPING #-} MessageField Word64
+instance {-# OVERLAPPING #-} MessageField (Signed Int32)
+instance {-# OVERLAPPING #-} MessageField (Signed Int64)
+instance {-# OVERLAPPING #-} MessageField (Fixed Word32)
+instance {-# OVERLAPPING #-} MessageField (Fixed Word64)
+instance {-# OVERLAPPING #-} MessageField (Signed (Fixed Int32))
+instance {-# OVERLAPPING #-} MessageField (Signed (Fixed Int64))
+instance {-# OVERLAPPING #-} MessageField Bool
+instance {-# OVERLAPPING #-} MessageField Float
+instance {-# OVERLAPPING #-} MessageField Double
 instance {-# OVERLAPPING #-} MessageField String
-instance MessageField T.Text
-instance MessageField TL.Text
-instance MessageField B.ByteString
-instance MessageField BL.ByteString
-instance (Bounded e, Named e, Enum e) => MessageField (Enumerated e)
+instance {-# OVERLAPPING #-} MessageField T.Text
+instance {-# OVERLAPPING #-} MessageField TL.Text
+instance {-# OVERLAPPING #-} MessageField B.ByteString
+instance {-# OVERLAPPING #-} MessageField BL.ByteString
+instance {-# OVERLAPPING #-} (Bounded e, Named e, Enum e) => MessageField (Enumerated e)
 
 instance (HasDefault a, Primitive a) => MessageField (ForceEmit a) where
   encodeMessageField = encodePrimitive
@@ -597,6 +597,12 @@ instance {-# OVERLAPPABLE #-} (Named a, Message a) => MessageField [a] where
       oneMsg :: Parser RawMessage a
       oneMsg = decodeMessage (fieldNumber 1)
   protoType _ = messageField (NestedRepeated (Named (Single (nameOf (Proxy @a))))) Nothing
+
+instance {-# OVERLAPPABLE #-} (Named a, Message a) => MessageField a where
+  -- undefined for the encodeMessage field number because we shouldn't use it (and we should update class Message to not have that parameter).
+  encodeMessageField fn = Encode.embedded fn . encodeMessage 1
+  decodeMessageField = Decode.embedded'' (decodeMessage undefined)
+  protoType _ = messageField (Prim (Named (Single (nameOf (Proxy @a))))) Nothing
 
 instance (Named a, Message a, HasDefault a) => MessageField (NonEmpty a) where
   encodeMessageField fn = foldMap (Encode.embedded fn . encodeMessage (fieldNumber 1))
