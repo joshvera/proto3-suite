@@ -600,7 +600,7 @@ instance {-# OVERLAPPABLE #-} (Named a, Message a) => MessageField [a] where
 
 instance {-# OVERLAPPABLE #-} (Named a, Message a) => MessageField a where
   encodeMessageField fn = Encode.embedded fn . encodeMessage 1
-  decodeMessageField = Decode.embedded'' (decodeMessage undefined)
+  decodeMessageField = Decode.embedded'' (decodeMessage 1)
   protoType _ = messageField (Prim (Named (Single (nameOf (Proxy @a))))) Nothing
 
 instance (Named a, Message a, HasDefault a) => MessageField (NonEmpty a) where
