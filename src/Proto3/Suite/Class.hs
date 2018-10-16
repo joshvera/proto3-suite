@@ -599,7 +599,6 @@ instance {-# OVERLAPPABLE #-} (Named a, Message a) => MessageField [a] where
   protoType _ = messageField (NestedRepeated (Named (Single (nameOf (Proxy @a))))) Nothing
 
 instance {-# OVERLAPPABLE #-} (Named a, Message a) => MessageField a where
-  -- undefined for the encodeMessage field number because we shouldn't use it (and we should update class Message to not have that parameter).
   encodeMessageField fn = Encode.embedded fn . encodeMessage 1
   decodeMessageField = Decode.embedded'' (decodeMessage undefined)
   protoType _ = messageField (Prim (Named (Single (nameOf (Proxy @a))))) Nothing
