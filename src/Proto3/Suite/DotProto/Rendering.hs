@@ -22,12 +22,12 @@ module Proto3.Suite.DotProto.Rendering
 import Prelude hiding ((<>))
 
 import           Data.Char
-import qualified Data.Text                 as T
-import           Filesystem.Path.CurrentOS (toText)
+import qualified Data.Text                    as T
+import           Filesystem.Path.CurrentOS    (toText)
 import           Proto3.Suite.DotProto.AST
-import           Proto3.Wire.Types         (FieldNumber (..))
-import           Text.PrettyPrint.Leijen   ((<$$>), (<+>), (<>), Pretty(..))
-import qualified Text.PrettyPrint.Leijen   as PP
+import           Proto3.Wire.Types            (FieldNumber (..))
+import           Text.PrettyPrint.ANSI.Leijen ((<$$>), (<+>), (<>), Pretty(..))
+import qualified Text.PrettyPrint.ANSI.Leijen as PP
 
 -- | Options for rendering a @.proto@ file.
 data RenderingOptions = RenderingOptions
