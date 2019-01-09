@@ -42,7 +42,7 @@ library
                        parsec >= 3.1.9 && <3.2.0,
                        parsers >= 0.12 && <0.13,
                        pretty ==1.1.*,
-                       pretty-show >= 1.6.12 && < 1.9,
+                       pretty-show >= 1.6.12 && < 2,
                        proto3-wire == 1.0.*,
                        QuickCheck >=2.8 && <3.0,
                        quickcheck-instances >= 0.3.16.1 && <0.4,
