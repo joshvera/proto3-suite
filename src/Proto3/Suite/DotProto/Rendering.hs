@@ -156,9 +156,9 @@ instance Pretty DotProtoServicePart where
   pretty (DotProtoServiceRPC name (callname, callstrm) (retname, retstrm) options)
     =   PP.text "rpc"
     <+> pretty name
-    <+> PP.parens (pretty callstrm <+> pretty callname)
+    <+> PP.parens (pretty callstrm <> pretty callname)
     <+> PP.text "returns"
-    <+> PP.parens (pretty retstrm <+> pretty retname)
+    <+> PP.parens (pretty retstrm <> pretty retname)
     <>  case options of
           [] -> PP.semi
           _  -> PP.space <> (PP.braces . PP.vcat $ topOption <$> options)
@@ -166,7 +166,7 @@ instance Pretty DotProtoServicePart where
   pretty DotProtoServiceEmpty           = PP.empty
 
 instance Pretty Streaming where
-  pretty Streaming    = PP.text "stream"
+  pretty Streaming    = PP.text "stream" <> PP.space
   pretty NonStreaming = PP.empty
 
 instance Pretty DotProtoIdentifier where
