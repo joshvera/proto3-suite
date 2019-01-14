@@ -1,8 +1,8 @@
-resolver: lts-12.0
+resolver: lts-13.1
 
 packages:
 - .
 - location:
     git: https://github.com/joshvera/proto3-wire.git
-    commit: 9a287602218668aefceede406c93232fc0890f33
+    commit: 84664e22f01beb67870368f1f88ada5d0ad01f56
   extra-dep: true

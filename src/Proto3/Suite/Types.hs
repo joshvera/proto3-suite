@@ -2,12 +2,14 @@
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE ExplicitNamespaces #-}
+{-# LANGUAGE TypeApplications #-}
 
 module Proto3.Suite.Types
   (
@@ -20,6 +22,8 @@ module Proto3.Suite.Types
 
   , ForceEmit(..)
   , Nested(..)
+  , pattern Present
+  , pattern Absent
   , UnpackedVec(..)
   , PackedVec(..)
   , NestedVec(..)
@@ -29,7 +33,6 @@ module Proto3.Suite.Types
 
 import           Control.Applicative
 import           Control.DeepSeq (NFData)
-import           Data.Semigroup
 import           GHC.Exts (IsList(..))
 import           GHC.Generics
 import qualified Data.Vector as V
@@ -57,7 +60,7 @@ instance (Bounded a, Enum a) => Arbitrary (Enumerated a) where
     i <- arbitrary
     if i < fromEnum (minBound :: a) || i > fromEnum (maxBound :: a)
        then return $ Enumerated $ Left i
-       else return $ Enumerated $ Right (toEnum i)
+       else return $ Enumerated $ Right (toEnum i)  
 
 -- | 'PackedVec' provides a way to encode packed lists of basic protobuf types into
 -- the wire format.
@@ -102,6 +105,17 @@ instance Arbitrary a => Arbitrary (NestedVec a) where
 newtype Nested a = Nested { nested :: Maybe a }
   deriving (Show, Eq, Ord, Generic, NFData, Semigroup, Monoid, Arbitrary, Functor,
             Foldable, Traversable, Applicative, Alternative, Monad)
+
+-- | 'Present' and 'Absent' provide syntactic convenience when matching on
+-- or constructing 'Nested' values.
+pattern Present :: a -> Nested a
+pattern Present t = Nested (Just t)
+
+-- | Equivalent to @Nested Nothing@.
+pattern Absent :: Nested a
+pattern Absent = Nested Nothing
+
+{-# COMPLETE Present, Absent #-}
 
 -- | 'ForceEmit' provides a way to force emission of field values, even when
 -- default-value semantics states otherwise. Used when serializing oneof

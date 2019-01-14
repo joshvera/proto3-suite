@@ -60,6 +60,7 @@
 {-# LANGUAGE DefaultSignatures          #-}
 {-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE PolyKinds                  #-}
 {-# LANGUAGE ScopedTypeVariables        #-}
 {-# LANGUAGE TypeApplications           #-}
@@ -69,11 +70,13 @@
 
 module Proto3.Suite.Class
   ( Primitive(..)
+  , PrimitiveEnum(..)
   , MessageField(..)
   , Message(..)
   , Message1(..)
 
   -- * Encoding
+  , toByteString
   , toLazyByteString
   , toLazyByteString1
 
@@ -102,6 +105,7 @@ import           Control.Monad
 import qualified Data.ByteString        as B
 import qualified Data.ByteString.Base64 as B64
 import qualified Data.ByteString.Lazy   as BL
+import           Data.Either            (fromRight)
 import qualified Data.Foldable          as F
 import           Data.Functor           (($>))
 import           Data.Int               (Int32, Int64)
@@ -332,9 +336,29 @@ class Primitive a where
   default primType :: Named a => Proxy a -> DotProtoPrimType
   primType pr = Named (Single (nameOf pr))
 
+-- | Provides a DerivingVia hook to opt into a sensible definition of 'Primitive'
+-- for a given 'Enum'. Should the decoding fail, the 'HasDefault' instance is used
+-- as a fallback.
+-- @
+--   data Foo = Unknown | Bar | Baz
+--     deriving (Eq, Ord, Bounded, Named, Enum)
+--     deriving Primitive via PrimitiveEnum Foo
+-- @
+newtype PrimitiveEnum a = PrimitiveEnum a
+  deriving (Eq, Ord, Bounded, Named, Enum, HasDefault)
+
+instance (Enum a, Bounded a, Named a, HasDefault a) => Primitive (PrimitiveEnum a) where
+  primType _ = Named (Single (nameOf (Proxy @a)))
+  encodePrimitive = Encode.enum
+  decodePrimitive = fromRight def <$> Decode.enum            
+
 -- | Serialize a message as a lazy 'BL.ByteString'.
 toLazyByteString :: Message a => a -> BL.ByteString
 toLazyByteString = Encode.toLazyByteString . encodeMessage (fieldNumber 1)
+
+-- | Serialize a message as a strict 'B.ByteString'.
+toByteString :: Message a => a -> B.ByteString
+toByteString = BL.toStrict . toLazyByteString
 
 -- | Parse any message that can be decoded.
 fromByteString :: Message a => B.ByteString -> Either ParseError a
