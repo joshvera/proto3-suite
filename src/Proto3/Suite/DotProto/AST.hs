@@ -130,6 +130,7 @@ data DotProtoDefinition
   = DotProtoMessage DotProtoIdentifier [DotProtoMessagePart]
   | DotProtoEnum    DotProtoIdentifier [DotProtoEnumPart]
   | DotProtoService DotProtoIdentifier [DotProtoServicePart]
+  | DotProtoComment String
   deriving (Show, Eq)
 
 instance Arbitrary DotProtoDefinition where
@@ -295,6 +296,7 @@ instance Arbitrary Streaming where
 data DotProtoServicePart
   = DotProtoServiceRPC    DotProtoIdentifier (DotProtoIdentifier, Streaming) (DotProtoIdentifier, Streaming) [DotProtoOption]
   | DotProtoServiceOption DotProtoOption
+  | DotProtoServiceComment String
   | DotProtoServiceEmpty
   deriving (Show, Eq)
 

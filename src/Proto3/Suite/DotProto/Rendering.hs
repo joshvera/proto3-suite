@@ -108,6 +108,7 @@ prettyPrintProtoDefinition opts = defn where
   defn (DotProtoMessage name parts) = PP.text "message" <+> pretty name <+> vcat (msgPart name <$> parts)
   defn (DotProtoEnum    name parts) = PP.text "enum"    <+> pretty name <+> vcat (enumPart name <$> parts)
   defn (DotProtoService name parts) = PP.text "service" <+> pretty name <+> vcat (pretty <$> parts)
+  defn (DotProtoComment comment)    = PP.text "//" <+> pretty comment
 
   -- Vertical concat with braces that appropriately handles empty list (prints
   -- `{ }` on one line) and handles nesting and trailing newlines. Also puts the
@@ -162,8 +163,9 @@ instance Pretty DotProtoServicePart where
     <>  case options of
           [] -> PP.semi
           _  -> PP.space <> (PP.braces . PP.vcat $ topOption <$> options)
-  pretty (DotProtoServiceOption option) = topOption option
-  pretty DotProtoServiceEmpty           = PP.empty
+  pretty (DotProtoServiceOption option)   = topOption option
+  pretty (DotProtoServiceComment comment) = PP.text "//" <+> pretty comment
+  pretty DotProtoServiceEmpty             = PP.empty
 
 instance Pretty Streaming where
   pretty Streaming    = PP.text "stream" <> PP.space
