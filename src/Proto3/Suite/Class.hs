@@ -66,6 +66,7 @@
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE TypeOperators              #-}
 {-# LANGUAGE UndecidableInstances       #-}
+{-# LANGUAGE RecordWildCards            #-}
 
 module Proto3.Suite.Class
   ( Primitive(..)
@@ -844,22 +845,25 @@ instance (KnownNat (GenericFieldCount f), GenericMessage f, GenericMessage g) =>
         DotProtoMessageField part { dotProtoFieldNumber = (FieldNumber . (offset +) . getFieldNumber . dotProtoFieldNumber) part }
       adjustPart part = part -- Don't adjust other message types?
 
-instance (Constructor t1, Constructor t2, GenericMessage f, GenericMessage g) => GenericMessage (M1 C t1 f :+: M1 C t2 g) where
-  type GenericFieldCount (C1 t1 f :+: C1 t2 g) = GenericFieldCount f `Max` GenericFieldCount g
+instance (KnownNat (GenericFieldCount f), GenericMessage f, GenericMessage g) => GenericMessage (f :+: g) where
+  type GenericFieldCount (f :+: g) = GenericFieldCount f + GenericFieldCount g
   genericEncodeMessage num (L1 x) = genericEncodeMessage num x
   genericEncodeMessage num (R1 y) = genericEncodeMessage num y
   genericDecodeMessage num = L1 <$> genericDecodeMessage num <|> R1 <$> genericDecodeMessage num
-  genericDotProto (_ :: Proxy (M1 C t1 f :+: M1 C t2 g)) = sumProtos (genericDotProto (Proxy @f)) (genericDotProto (Proxy @g))
+  genericDotProto (_ :: Proxy (f :+: g)) = sumProtos (genericDotProto (Proxy @f)) (adjust (genericDotProto (Proxy @g)))
     where
-      sumProtos fields1 fields2 =
-        [ DotProtoMessageOneOf (Single "sum")
-            [ DotProtoField 1 (Prim (Named (Single (conName (undefined :: C1 t1 f ()))))) (Single (toLower $ conName (undefined :: C1 t1 f ()))) [] Nothing
-            , DotProtoField 2 (Prim (Named (Single (conName (undefined :: C1 t2 g ()))))) (Single (toLower $ conName (undefined :: C1 t2 g ()))) [] Nothing ]
-        , DotProtoMessageDefinition $ DotProtoMessage (Single (conName (undefined :: C1 t1 f ()))) fields1
-        , DotProtoMessageDefinition $ DotProtoMessage (Single (conName (undefined :: C1 t2 g ()))) fields2
-        ]
-        where
-          toLower (x : xs) = Char.toLower x : xs
+      sumProtos [DotProtoMessageField leftField]   [DotProtoMessageField rightField]    = [ DotProtoMessageOneOf (Single "sum") (leftField : [rightField]) ]
+      sumProtos [DotProtoMessageField leftField]   [DotProtoMessageOneOf name fields]   = [ DotProtoMessageOneOf name (leftField : fields) ]
+      sumProtos [DotProtoMessageOneOf name fields] [DotProtoMessageField rightField]    = [ DotProtoMessageOneOf name (fields <> [rightField]) ]
+      sumProtos [DotProtoMessageOneOf name fields] [DotProtoMessageOneOf _ rightFields] = [ DotProtoMessageOneOf name (fields <> rightFields) ]
+      sumProtos left right = left <> right
+      offset = fromIntegral $ natVal (Proxy @(GenericFieldCount f))
+      adjust = map adjustPart
+      adjustPart (DotProtoMessageField part) = DotProtoMessageField part { dotProtoFieldNumber = (FieldNumber . (offset +) . getFieldNumber . dotProtoFieldNumber) part }
+      adjustPart (DotProtoMessageOneOf name fields) = DotProtoMessageOneOf name (fmap adjustFieldPart fields)
+      adjustPart part = part -- Don't adjust other message types?
+      adjustFieldPart field@DotProtoField{..} = field { dotProtoFieldNumber = FieldNumber (offset + getFieldNumber dotProtoFieldNumber) }
+      adjustFieldPart part = part
 
 instance MessageField c => GenericMessage (K1 i c) where
   type GenericFieldCount (K1 i c) = 1
