@@ -18,15 +18,17 @@
 module Proto3.Suite
   (
   -- * Message Encoding/Decoding
-    toLazyByteString
-  , fromByteString
+    toByteString
+  , toLazyByteString
   , toLazyByteString1
+  , fromByteString
   , fromByteString1
   , fromB64
   , Message(..)
   , Message1(..)
   , MessageField(..)
   , Primitive(..)
+  , PrimitiveEnum(..)
   , HasDefault(..)
   , FieldNumber(..)
   , fieldNumber
