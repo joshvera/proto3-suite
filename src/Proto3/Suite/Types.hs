@@ -59,7 +59,7 @@ instance (Bounded a, Enum a) => Arbitrary (Enumerated a) where
     i <- arbitrary
     if i < fromEnum (minBound :: a) || i > fromEnum (maxBound :: a)
        then return $ Enumerated $ Left i
-       else return $ Enumerated $ Right (toEnum i)  
+       else return $ Enumerated $ Right (toEnum i)
 
 -- | 'PackedVec' provides a way to encode packed lists of basic protobuf types into
 -- the wire format.
