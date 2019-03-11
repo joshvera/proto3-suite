@@ -338,6 +338,12 @@ instance ToJSONPB TL.Text where
 instance FromJSONPB TL.Text where
   parseJSONPB = A.parseJSON
 
+instance ToJSONPB T.Text where
+  toJSONPB     = const . A.toJSON
+  toEncodingPB = const . A.toEncoding
+instance FromJSONPB T.Text where
+  parseJSONPB = A.parseJSON
+
 -- bytes
 
 bsToJSONPB :: BS.ByteString -> A.Value
