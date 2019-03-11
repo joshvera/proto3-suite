@@ -173,10 +173,10 @@ data Options = Options
   { optEmitDefaultValuedFields :: Bool
   } deriving Show
 
--- | Default options for JSONPB encoding. By default, all options are @False@.
+-- | Default options for JSONPB encoding. By default, all options are @True@.
 defaultOptions :: Options
 defaultOptions = Options
-  { optEmitDefaultValuedFields = False
+  { optEmitDefaultValuedFields = True
   }
 
 -- * Helper types and functions
